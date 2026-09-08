@@ -1,0 +1,19 @@
+{
+  "name": "weathergpt",
+  "version": "1.0.0",
+  "description": "WeatherGPT — Intelligent Multilingual Weather Assistant",
+  "main": "backend/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node --watch backend/server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  },
+  "keywords": ["weather", "bhashini", "open-meteo", "ai-assistant", "voice", "multilingual", "sih"],
+  "author": "Student Team",
+  "license": "MIT"
+}

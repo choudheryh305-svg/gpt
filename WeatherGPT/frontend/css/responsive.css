@@ -1,0 +1,133 @@
+/* ----------------------------------------------------
+   WeatherGPT — Responsive Adaptations
+   Mobile-first breakpoint refinements
+   ---------------------------------------------------- */
+
+/* Laptops & Tablets (under 1120px) */
+@media (max-width: 1120px) {
+  .main-layout {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .forecast-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .chat-card {
+    min-height: 480px;
+  }
+}
+
+/* Tablets (under 768px) */
+@media (max-width: 768px) {
+  .app-container {
+    padding: 12px 14px 24px 14px;
+  }
+
+  .navbar {
+    padding: 10px 16px;
+    margin-bottom: 16px;
+  }
+
+  .brand-text h1 {
+    font-size: 1.25rem;
+  }
+
+  .brand-text .tagline {
+    display: none;
+  }
+
+  .search-section {
+    flex-direction: column;
+  }
+
+  .search-dropdown {
+    right: 0;
+  }
+
+  .geo-btn {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .temp-number {
+    font-size: 3.8rem;
+  }
+
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .forecast-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .card-header-flex {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chart-tabs {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .chart-tab {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+/* Mobile Phones (under 480px) */
+@media (max-width: 480px) {
+  .navbar {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .nav-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .lang-selector-wrap {
+    flex: 1;
+  }
+
+  .styled-select {
+    width: 100%;
+  }
+
+  .card {
+    padding: 16px;
+    border-radius: var(--radius-md);
+  }
+
+  .card-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .weather-visual {
+    align-items: flex-start;
+  }
+
+  .forecast-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chat-messages {
+    max-height: 320px;
+  }
+
+  .message {
+    max-width: 95%;
+  }
+}

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WeatherGPT — Intelligent Multilingual Weather Assistant</title>
+  
+  <!-- Font & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- Top Navigation Bar -->
+    <header class="navbar">
+      <div class="brand">
+        <div class="brand-icon">
+          <i class="fa-solid fa-cloud-bolt"></i>
+        </div>
+        <div class="brand-text">
+          <h1>Weather<span>GPT</span></h1>
+          <p class="tagline" data-i18n="tagline">Intelligent Multilingual Weather Assistant</p>
+        </div>
+      </div>
+
+      <div class="nav-controls">
+        <!-- Language Selector -->
+        <div class="lang-selector-wrap">
+          <i class="fa-solid fa-language"></i>
+          <select id="langSelect" class="styled-select" aria-label="Select Language">
+            <option value="en">English</option>
+            <option value="hi">हिन्दी (Hindi)</option>
+          </select>
+        </div>
+
+        <!-- Theme Toggle -->
+        <button id="themeToggle" class="icon-btn" aria-label="Toggle Theme" title="Toggle Light/Dark Theme">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Area: 2-Column Responsive Layout -->
+    <main class="main-layout">
+      
+      <!-- Left Column: Weather Dashboard & Visualizations -->
+      <section class="dashboard-panel">
+        
+        <!-- Search & Geolocation Bar -->
+        <div class="search-section">
+          <form id="searchForm" class="search-box">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input 
+              type="text" 
+              id="cityInput" 
+              placeholder="Search Indian or global city (e.g., Meerut, Delhi, Mumbai)..." 
+              autocomplete="off"
+              required
+            >
+            <button type="submit" class="search-submit-btn" data-i18n="searchBtn">Search</button>
+          </form>
+
+          <button id="geoBtn" class="geo-btn" title="Use Current GPS Location" data-i18n-title="geoBtnTitle">
+            <i class="fa-solid fa-location-crosshairs"></i>
+            <span class="geo-text" data-i18n="currentLoc">My Location</span>
+          </button>
+        </div>
+
+        <!-- Autocomplete Suggestions Dropdown -->
+        <div id="searchResults" class="search-dropdown hidden"></div>
+
+        <!-- Quick Access: Favorites & Recent Searches -->
+        <div class="quick-access-bar">
+          <div class="quick-item-group">
+            <span class="quick-label"><i class="fa-solid fa-star text-gold"></i> <span data-i18n="favorites">Favorites:</span></span>
+            <div id="favoritesList" class="chips-container">
+              <span class="empty-chip" data-i18n="noFavs">No saved cities</span>
+            </div>
+          </div>
+
+          <div class="quick-item-group">
+            <span class="quick-label"><i class="fa-solid fa-clock-rotate-left"></i> <span data-i18n="recents">Recent:</span></span>
+            <div id="recentsList" class="chips-container">
+              <span class="empty-chip" data-i18n="noRecents">None</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dynamic Weather Alert Banner -->
+        <div id="weatherAlertBanner" class="alert-banner hidden">
+          <div class="alert-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+          <div class="alert-content">
+            <h4 id="alertTitle">Weather Advisory</h4>
+            <p id="alertMessage">Moderate rain is expected later today.</p>
+          </div>
+        </div>
+
+        <!-- Hero Current Weather Card -->
+        <div class="card current-weather-card" id="currentWeatherCard">
+          <div class="card-header">
+            <div>
+              <div class="location-heading">
+                <h2 id="cityName">Meerut</h2>
+                <button id="favoriteBtn" class="star-btn" title="Bookmark city">
+                  <i class="fa-regular fa-star"></i>
+                </button>
+              </div>
+              <p id="locationSubtext" class="subtext">Uttar Pradesh, India</p>
+              <p id="localTime" class="timestamp">Updated just now</p>
+            </div>
+            <div class="weather-visual">
+              <div id="weatherIcon" class="hero-icon">🌤️</div>
+              <span id="weatherCondition" class="condition-badge">Partly Cloudy</span>
+            </div>
+          </div>
+
+          <div class="temp-hero">
+            <div class="temp-val-wrap">
+              <span id="currentTemp" class="temp-number">28</span>
+              <span class="temp-unit">°C</span>
+            </div>
+            <div class="feels-like">
+              <span data-i18n="feelsLike">Feels like</span> <span id="feelsLikeTemp">30</span>°C
+            </div>
+          </div>
+
+          <!-- Secondary Metrics Grid -->
+          <div class="metrics-grid">
+            <div class="metric-item">
+              <div class="metric-icon humidity-icon"><i class="fa-solid fa-droplet"></i></div>
+              <div class="metric-info">
+                <span class="metric-label" data-i18n="humidity">Humidity</span>
+                <span id="humidityVal" class="metric-val">65%</span>
+              </div>
+            </div>
+
+            <div class="metric-item">
+              <div class="metric-icon wind-icon"><i class="fa-solid fa-wind"></i></div>
+              <div class="metric-info">
+                <span class="metric-label" data-i18n="wind">Wind</span>
+                <span id="windVal" class="metric-val">14 km/h</span>
+              </div>
+            </div>
+
+            <div class="metric-item">
+              <div class="metric-icon rain-icon"><i class="fa-solid fa-cloud-showers-heavy"></i></div>
+              <div class="metric-info">
+                <span class="metric-label" data-i18n="rainProb">Rain Probability</span>
+                <span id="rainProbVal" class="metric-val">20%</span>
+              </div>
+            </div>
+
+            <div class="metric-item">
+              <div class="metric-icon temp-range-icon"><i class="fa-solid fa-temperature-half"></i></div>
+              <div class="metric-info">
+                <span class="metric-label" data-i18n="dailyRange">Today's Range</span>
+                <span id="dailyRangeVal" class="metric-val">22° / 32°C</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7-Day Forecast Grid -->
+        <div class="card forecast-card">
+          <div class="card-title">
+            <i class="fa-solid fa-calendar-week"></i>
+            <h3 data-i18n="forecastTitle">7-Day Forecast</h3>
+          </div>
+          <div id="forecastContainer" class="forecast-grid">
+            <!-- Forecast items injected via JavaScript -->
+          </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="card chart-card">
+          <div class="card-header-flex">
+            <div class="card-title">
+              <i class="fa-solid fa-chart-line"></i>
+              <h3 data-i18n="chartsTitle">Hourly Trends (Next 24 Hours)</h3>
+            </div>
+            <!-- Chart Metric Tabs -->
+            <div class="chart-tabs">
+              <button class="chart-tab active" data-chart="temp" data-i18n="tempTab">Temperature</button>
+              <button class="chart-tab" data-chart="rain" data-i18n="rainTab">Rain %</button>
+              <button class="chart-tab" data-chart="wind" data-i18n="windTab">Wind Speed</button>
+            </div>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="weatherChart"></canvas>
+          </div>
+        </div>
+
+      </section>
+
+
+      <!-- Right Column: WeatherGPT Conversational Assistant & Voice -->
+      <section class="assistant-panel">
+        <div class="card chat-card">
+          
+          <!-- Assistant Header -->
+          <div class="assistant-header">
+            <div class="assistant-info">
+              <div class="ai-avatar">
+                <i class="fa-solid fa-robot"></i>
+                <span class="status-indicator"></span>
+              </div>
+              <div>
+                <h3>Weather<span>GPT</span> <span class="badge">AI Assistant</span></h3>
+                <p id="assistantStatus" class="subtext">Grounded on Open-Meteo & BHASHINI</p>
+              </div>
+            </div>
+
+            <!-- Voice Engine Status Badge -->
+            <div class="voice-badge" id="voiceStatusBadge" title="Speech & Translation Engine">
+              <i class="fa-solid fa-microphone-lines"></i>
+              <span id="voiceEngineLabel">BHASHINI / Web Voice</span>
+            </div>
+          </div>
+
+          <!-- Chat Conversation Log -->
+          <div id="chatMessages" class="chat-messages">
+            <div class="message system-message">
+              <div class="message-content">
+                <p>👋 <strong>Namaste!</strong> I am <strong>WeatherGPT</strong>, your intelligent weather companion.</p>
+                <p>I answer questions in <strong>English & हिन्दी</strong> using live meteorological data from Open-Meteo. You can type or click the microphone to speak your question.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Suggestions Chips -->
+          <div class="quick-suggestions-wrap">
+            <div class="suggestions-label" data-i18n="tryAsking">Try asking:</div>
+            <div id="quickChips" class="quick-chips">
+              <button class="chip" data-q="Will it rain tomorrow?">🌧️ Will it rain tomorrow?</button>
+              <button class="chip" data-q="Do I need an umbrella today?">☂️ Umbrella needed?</button>
+              <button class="chip" data-q="कल बारिश होगी क्या?">🇮🇳 कल बारिश होगी?</button>
+              <button class="chip" data-q="How hot will it get today?">☀️ Peak temperature?</button>
+              <button class="chip" data-q="क्या आज का मौसम खेती/किसानों के लिए ठीक है?">🌾 कृषि / फसल सलाह</button>
+              <button class="chip" data-q="Is today good for outdoor activities?">🏃 Outdoor plans</button>
+            </div>
+          </div>
+
+          <!-- Voice Recording Indicator Banner -->
+          <div id="recordingBanner" class="recording-banner hidden">
+            <div class="pulse-circle"></div>
+            <span class="recording-text" data-i18n="listening">Listening... Speak in Hindi or English</span>
+            <button id="cancelVoiceBtn" class="cancel-voice-btn" title="Cancel"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+
+          <!-- Question Input Box -->
+          <form id="chatForm" class="chat-input-area">
+            <button type="button" id="micBtn" class="mic-btn" title="Speak question" aria-label="Speak">
+              <i class="fa-solid fa-microphone"></i>
+            </button>
+            <input 
+              type="text" 
+              id="chatInput" 
+              placeholder="Ask a weather question (e.g., 'Will it rain tomorrow?')..." 
+              autocomplete="off"
+              required
+            >
+            <button type="submit" id="sendBtn" class="send-btn" title="Send Question" aria-label="Send">
+              <i class="fa-solid fa-paper-plane"></i>
+            </button>
+          </form>
+
+          <!-- Technical Honesty Note -->
+          <div class="assistant-footer-note">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span data-i18n="accuracyNote">Real-time calculations grounded on Open-Meteo. No fabricated figures.</span>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>WeatherGPT — Intelligent Multilingual Weather Assistant | Powered by <a href="https://open-meteo.com" target="_blank" rel="noreferrer">Open-Meteo</a> & <a href="https://bhashini.gov.in" target="_blank" rel="noreferrer">Digital India BHASHINI</a></p>
+    </footer>
+
+  </div>
+
+  <!-- Audio Element for BHASHINI TTS Stream -->
+  <audio id="ttsAudio" class="hidden"></audio>
+
+  <!-- JavaScript Modules (Loaded in dependency order) -->
+  <script src="js/storage.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/intent.js"></script>
+  <script src="js/voice.js"></script>
+  <script src="js/weather.js"></script>
+  <script src="js/chatbot.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
